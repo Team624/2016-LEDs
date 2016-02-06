@@ -1,3 +1,6 @@
+
+
+
 #include <Adafruit_NeoPixel.h>
 #include "Wire.h"
 
@@ -8,7 +11,7 @@
 
 #define ROBOT_STATE_PIN 12
 #define ROBOT_STATE_PIN_TWO 22
-#define ROBOT_STATE_PIN_THREE 28 /*???????????*/
+#define ROBOT_STATE_PIN_THREE 28 /*????????*/
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(120, PIN, NEO_BRG + NEO_KHZ800);
 Adafruit_NeoPixel stripz = Adafruit_NeoPixel(120, PINZ, NEO_GRB + NEO_KHZ800);
@@ -29,8 +32,8 @@ void setup() {
   Serial.begin(9600);
 }
 
-#define STATE_TELEOP    0b000  //ask justin
-#define STATE_AUTO      0b001
+#define STATE_TELEOP    0b000  
+#define STATE_AUTO      0b001 
 #define STATE_SCORE     0b010
 #define STATE_COOP      0b011
 #define STATE_BROWNOUT  0b100
@@ -354,15 +357,75 @@ void lavalamp()
   stripz.show();
 }
 
+void strobe()
+{
+  uint16_t i, c;
+  c = strip.Color(0, 255, 0);
 
+  if(on)
+  {
+    fillStrip(c, 255);
+    //fillStripZ(c, 255);
+    on = false;
+  }
+  else
+  {
+    fillStrip(strip.Color(0, 0, 0), 255); //black
+    on = true;
+  }
+  delay(300);
+  strip.show();
+}
 
+void sixtwofour()
+{
+  uint16_t i, c, s, t, f;
+  c = strip.Color(0, 255, 0); //green
+  s = 6;
+  t = 2;
+  f = 4;
 
+  for (i = 0; i < (strip.numPixels() + s + t + f + 15); i++)
+  {
+    strip.setPixelColor(i, c);
+    strip.setPixelColor(i - s, 0);
+    strip.setPixelColor(i - s - 5, c);
+    strip.setPixelColor(i - s - 5 - t, 0);
+    strip.setPixelColor(i - s - 5 - t - 5, c);
+    strip.setPixelColor(i - s - 5 - t - 5 - f, 0);
+    strip.setPixelColor(i - s - 5 - t - 5 - f - 5, 0);
+    //strip.setPixelColor(i+5,0);
+    strip.show();
+    delay(50);
+  }
+}
 
+void happylittlewave()
+{
+  uint32_t b, d, dg, g, wg;
+  b = strip.Color(0, 0, 0) //black
+  d = strip.Color(0, 50, 0) //darker green
+  dg = strip.Color(0, 100, 0) //dark green
+  g = strip.Color(0, 255, 0) //green
+  wg = strip.Color(75, 255, 75) //light green
+  
+}
 
-
-
-
-
+void clearStrip()
+{
+  for(int i = 0; i < strip.numPixels(); i ++)
+  {
+    strip.setPixelColor(i, 0);
+    strip.show();
+    delay(1);
+  }
+  for(int i = 0; i < stripz.numPixels(); i ++)
+  {
+    stripz.setPixelColor(i, 0);
+    stripz.show();
+    delay(1);
+  }
+}
 
 
 void auton()
@@ -387,7 +450,6 @@ void score()
     stripz.show();
   }
 }
-
 
 
 
