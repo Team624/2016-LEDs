@@ -347,15 +347,15 @@ stripz.show();
 
 void happylittlewave()
 {
-  uint32_t b, d, dg, g, wg;
+  uint32_t colour, b, d, dg, g, wg;
   b = strip.Color(0, 0, 0); //black
   d = strip.Color(0, 50, 0); //darker green
   dg = strip.Color(0, 100, 0); //dark green
   g = strip.Color(0, 255, 0); //green
   wg = strip.Color(75, 255, 75); //light green
-  colour = (uint_32t)random(0,4);
+  colour = random(0,4);
 
-
+  
   stripz.show();
   strip.show();
   delay(15);
