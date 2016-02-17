@@ -20,7 +20,7 @@ void fillStripZ(uint32_t c, uint8_t brightness) {
   //
  // strip.show();
 }
-/*
+
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;
   if(WheelPos < 85) {
@@ -32,4 +32,4 @@ uint32_t Wheel(byte WheelPos) {
    WheelPos -= 170;
    return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
   }
-}*/
+}
