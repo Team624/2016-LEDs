@@ -11,6 +11,9 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(31, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel stripz = Adafruit_NeoPixel(31, PINZ, NEO_GRB + NEO_KHZ800);
 
+bool on = true;
+bool stay_white = false;
+
 #include "utilities.h"
 
 void setup()
@@ -350,7 +353,12 @@ void happylittlewave()
   dg = strip.Color(0, 100, 0); //dark green
   g = strip.Color(0, 255, 0); //green
   wg = strip.Color(75, 255, 75); //light green
-  
+  colour = (uint_32t)random(0,4);
+
+
+  stripz.show();
+  strip.show();
+  delay(15);
 }
 
 void clearStrip()
