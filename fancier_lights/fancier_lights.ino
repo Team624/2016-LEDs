@@ -115,7 +115,6 @@ void loop()
   stripz.show();
 }
 
-<<<<<<< HEAD
 void climbCRAZE()
 {
   clearStrip();
@@ -127,14 +126,14 @@ void climbCRAZE()
    lg = strip.Color(150, 255, 150);
    b = strip.Color(0, 0, 0);
    t = strip.numPixels();
-   w = (int)(Math.random() * 20 + 1);
-   x = (int)(Math.random() * w + 1);
-   y = (int)(Math.random() * x + 1);
-   z = (int)(Math.random() * y + 1);
+   w = (int)(random() * 20 + 1);
+   x = (int)(random() * w + 1);
+   y = (int)(random() * x + 1);
+   z = (int)(random() * y + 1);
    doop = (int)random(0,3);
   
   if (doop == 0)
-  for(i = 0; i < t + x + y + z; i+= w)
+  for(uint8_t i = 0; i < t + x + y + z; i+= w)
   {
     strip.setPixelColor(i, g);
     strip.setPixelColor(i + y , lg);
@@ -147,7 +146,7 @@ void climbCRAZE()
     stripz.setPixelColor(i + y - z, dg);
   } 
   if (doop == 1)
-  for(i = 0; i < t + x + y + z; i+= x)
+  for(uint8_t i = 0; i < t + x + y + z; i+= x)
   {
     strip.setPixelColor(i, g);
     strip.setPixelColor(i + z , lg);
@@ -160,7 +159,7 @@ void climbCRAZE()
     stripz.setPixelColor(i + z - x, dg);
   } 
   if (doop == 2)
-  for(i = 0; i < t + x + y + z; i+= y)
+  for(uint8_t i = 0; i < t + x + y + z; i+= y)
   {
     strip.setPixelColor(i, g);
     strip.setPixelColor(i + x , lg);
@@ -173,7 +172,7 @@ void climbCRAZE()
     stripz.setPixelColor(i + x - w, dg);
   } 
   if (doop == 3)
-  for(i = 0; i < t + x + y + z; i+= z)
+  for(uint8_t i = 0; i < t + x + y + z; i+= z)
   {
     strip.setPixelColor(i, g);
     strip.setPixelColor(i + y , lg);
@@ -186,7 +185,7 @@ void climbCRAZE()
     stripz.setPixelColor(i + y - x, dg);
   } 
 }
-=======
+
 uint8_t sweg = 1;
 void statusLight()
 {
@@ -279,7 +278,6 @@ void statusLight()
       }
     }
   }
->>>>>>> e70c5cf454257cb799aa6108435c05e837c88f83
 
   //drive indicator gear
   for (uint8_t i = strip.numPixels() / 3; i < 2 * (strip.numPixels() / 3); i ++)
@@ -308,7 +306,7 @@ void statusLight()
     {
       strip.setPixelColor(i, yellow);
       stripz.setPixelColor(i, yellow);
-    }S
+    }
     if (shooterAuto)
     {
       strip.setPixelColor(i, green);
