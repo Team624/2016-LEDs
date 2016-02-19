@@ -107,29 +107,75 @@ void loop()
   stripz.show();
 }
 
-int sweg = 0;
 void climbCRAZE()
 {
   clearStrip();
-  if(sweg == 1)
-    sweg = 0;
-  else
-    sweg = 1;
-    
-  int green = strip.Color(0,255,0);
-  int white = strip.Color(255,255,255);
-  for(int i = 0; i < strip.numPixels(); i ++)
-  {
-    strip.setPixelColor(i, white);
-    stripz.setPixelColor(i, white);
-  }
+   
+   int g, l, dg, lg, b, t, w, x, y, z, doop;
+   g = strip.Color(0,255,0);
+   l = strip.Color(255,255,255);
+   dg = strip.Color(0, 100, 0);
+   lg = strip.Color(150, 255, 150);
+   b = strip.Color(0, 0, 0);
+   t = strip.numPixels();
+   w = (int)(Math.random() * 20 + 1);
+   x = (int)(Math.random() * w + 1);
+   y = (int)(Math.random() * x + 1);
+   z = (int)(Math.random() * y + 1);
+   doop = (int)random(0,3);
   
-  for(int i = sweg; i < strip.numPixels(); i +=2)
+  if (doop == 0)
+  for(i = 0; i < t + x + y + z; i+= w)
   {
-    strip.setPixelColor(i, green); 
-    stripz.setPixelColor(i, green);
-    delay(.5);
-  }
+    strip.setPixelColor(i, g);
+    strip.setPixelColor(i + y , lg);
+    strip.setPixelColor(i + y + z, l);
+    strip.setPixelColor(i + y - z, dg);
+    
+    stripz.setPixelColor(i, g);
+    stripz.setPixelColor(i + y , lg);
+    stripz.setPixelColor(i + y + z, l);
+    stripz.setPixelColor(i + y - z, dg);
+  } 
+  if (doop == 1)
+  for(i = 0; i < t + x + y + z; i+= x)
+  {
+    strip.setPixelColor(i, g);
+    strip.setPixelColor(i + z , lg);
+    strip.setPixelColor(i + z + x, l);
+    strip.setPixelColor(i + z - x, dg);
+    
+    stripz.setPixelColor(i, g);
+    stripz.setPixelColor(i + z , lg);
+    stripz.setPixelColor(i + z + x, l);
+    stripz.setPixelColor(i + z - x, dg);
+  } 
+  if (doop == 2)
+  for(i = 0; i < t + x + y + z; i+= y)
+  {
+    strip.setPixelColor(i, g);
+    strip.setPixelColor(i + x , lg);
+    strip.setPixelColor(i + x + w, l);
+    strip.setPixelColor(i + x - w, dg);
+    
+    stripz.setPixelColor(i, g);
+    stripz.setPixelColor(i + x , lg);
+    stripz.setPixelColor(i + x + w, l);
+    stripz.setPixelColor(i + x - w, dg);
+  } 
+  if (doop == 3)
+  for(i = 0; i < t + x + y + z; i+= z)
+  {
+    strip.setPixelColor(i, g);
+    strip.setPixelColor(i + y , lg);
+    strip.setPixelColor(i + y + x, l);
+    strip.setPixelColor(i + y - x, dg);
+    
+    stripz.setPixelColor(i, g);
+    stripz.setPixelColor(i + y , lg);
+    stripz.setPixelColor(i + y + x, l);
+    stripz.setPixelColor(i + y - x, dg);
+  } 
 }
 
 /*
