@@ -46,6 +46,14 @@ bool intakeActive;
 bool ballLoaded;
 bool alliance;
 
+bool intakeMan;
+bool intakeSafe;
+bool intakeAuto;
+
+bool shooterMan;
+bool shooterSafe;
+bool shooterAuto;
+
 void loop()
 {
   uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
@@ -114,42 +122,45 @@ void statusLight()
   int green = strip.Color(0, 255, 00);
   int red = strip.Color(255, 0, 0);
   int yellow = strip.Color(255, 255, 0);
-  int white = strip.Color(255,255,255);
-  
-  if(first_loop == true)
+  int white = strip.Color(255, 255, 255);
+
+  if (first_loop == true)
   {
-    if(!alliance)
+    if (!alliance)
     {
-      fillStrip(255,red);
-      fillStripZ(255,red);
-      delay(50);
+      fillStrip(255, red);
+      fillStripZ(255, red);
+      delay(300);
     }
     else
     {
-      fillStrip(255,blue);
-      fillStrip(255,blue);
-      delay(50);
+      fillStrip(255, blue);
+      fillStrip(255, blue);
+      delay(300);
     }
     first_loop = false;
   }
-  if(sweg == 0)
+
+  if (sweg == 0)
     sweg = 1;
   else
     sweg = 0;
-  
+
   //ball loaded
-  if(ballLoaded)
+  if (ballLoaded)
   {
     for (uint8_t i = 0; i < strip.numPixels() / 3; i ++)
     {
-      if((i + sweg) % 2 == 0)
+      if ((i + sweg) % 2 == 0)
       {
-        strip.setPixelColor(i,green);
-        stripz.setPixelColor(i,green);
+        strip.setPixelColor(i, green);
+        stripz.setPixelColor(i, green);
       }
       else
-        strip.setPixelColor(i,white);
-        stripz.setPixelColor(i,white);
+      {
+        strip.setPixelColor(i, white);
+        stripz.setPixelColor(i, white);
+      }
     }
   }
   else
@@ -157,15 +168,46 @@ void statusLight()
     //intake indicator 1 Roller Active
     for (uint8_t i = 0; i < strip.numPixels() / 6; i ++)
     {
-      
+      if (intakeActive)
+      {
+        if ((i + sweg) % 2 == 0)
+        {
+          strip.setPixelColor(i, blue);
+          stripz.setPixelColor(i, blue);
+        }
+        else
+        {
+          strip.setPixelColor(i, white);
+          stripz.setPixelColor(i, white);
+        }
+      }
+      else
+      {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+        stripz.setPixelColor(i, strip.Color(0, 0, 0));
+      }
     }
     //intake indicator 2 Roller Mode
     for (uint8_t i = strip.numPixels() / 6; i < strip.numPixels() / 3; i ++)
     {
-
+      if (intakeMan)
+      {
+        strip.setPixelColor(i, red);
+        stripz.setPixelColor(i, red);
+      }
+      if (intakeSafe)
+      {
+        strip.setPixelColor(i, yellow);
+        stripz.setPixelColor(i, yellow);
+      }
+      if (intakeAuto)
+      {
+        strip.setPixelColor(i, green);
+        stripz.setPixelColor(i, green);
+      }
     }
   }
-  
+
   //drive indicator gear
   for (uint8_t i = strip.numPixels() / 3; i < 2 * (strip.numPixels() / 3); i ++)
   {
@@ -184,12 +226,26 @@ void statusLight()
   //shooter indicator 1 shooter mode
   for (uint8_t i = strip.numPixels() / 3; i < 5 * (strip.numPixels() / 6); i ++)
   {
-    
+    if (shooterMan)
+    {
+      strip.setPixelColor(i, red);
+      stripz.setPixelColor(i, red);
+    }
+    if (shooterSafe)
+    {
+      strip.setPixelColor(i, yellow);
+      stripz.setPixelColor(i, yellow);
+    }S
+    if (shooterAuto)
+    {
+      strip.setPixelColor(i, green);
+      stripz.setPixelColor(i, green);
+    }
   }
   //shooter indicator 2 shooter ready
   for (uint8_t i = (5 * (strip.numPixels() / 6)); i < strip.numPixels(); i ++)
   {
-    if(shooterReady)
+    if (shooterReady)
     {
       strip.setPixelColor(i, blue);
       stripz.setPixelColor(i, blue);
