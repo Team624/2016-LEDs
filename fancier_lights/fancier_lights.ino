@@ -135,72 +135,136 @@ void climbCRAZE()
 {
   clearStrip();
    
-   int g, l, dg, lg, b, t, w, x, y, z, doop;
+   int i, g, l, dg, lg, t, pone, ptwo, ptre, pfor, pfiv, pnum, doop;
    g = strip.Color(0,255,0);
    l = strip.Color(255,255,255);
    dg = strip.Color(0, 100, 0);
    lg = strip.Color(150, 255, 150);
-   b = strip.Color(0, 0, 0);
-   t = strip.numPixels();
-   w = (int)(random() * 20 + 1);
-   x = (int)(random() * w + 1);
-   y = (int)(random() * x + 1);
-   z = (int)(random() * y + 1);
-   doop = (int)random(0,3);
   
-  if (doop == 0)
-  for(uint8_t i = 0; i < t + x + y + z; i+= w)
-  {
-    strip.setPixelColor(i, g);
-    strip.setPixelColor(i + y , lg);
-    strip.setPixelColor(i + y + z, l);
-    strip.setPixelColor(i + y - z, dg);
-    
-    stripz.setPixelColor(i, g);
-    stripz.setPixelColor(i + y , lg);
-    stripz.setPixelColor(i + y + z, l);
-    stripz.setPixelColor(i + y - z, dg);
-  } 
-  if (doop == 1)
-  for(uint8_t i = 0; i < t + x + y + z; i+= x)
-  {
-    strip.setPixelColor(i, g);
-    strip.setPixelColor(i + z , lg);
-    strip.setPixelColor(i + z + x, l);
-    strip.setPixelColor(i + z - x, dg);
-    
-    stripz.setPixelColor(i, g);
-    stripz.setPixelColor(i + z , lg);
-    stripz.setPixelColor(i + z + x, l);
-    stripz.setPixelColor(i + z - x, dg);
-  } 
-  if (doop == 2)
-  for(uint8_t i = 0; i < t + x + y + z; i+= y)
-  {
-    strip.setPixelColor(i, g);
-    strip.setPixelColor(i + x , lg);
-    strip.setPixelColor(i + x + w, l);
-    strip.setPixelColor(i + x - w, dg);
-    
-    stripz.setPixelColor(i, g);
-    stripz.setPixelColor(i + x , lg);
-    stripz.setPixelColor(i + x + w, l);
-    stripz.setPixelColor(i + x - w, dg);
-  } 
-  if (doop == 3)
-  for(uint8_t i = 0; i < t + x + y + z; i+= z)
-  {
-    strip.setPixelColor(i, g);
-    strip.setPixelColor(i + y , lg);
-    strip.setPixelColor(i + y + x, l);
-    strip.setPixelColor(i + y - x, dg);
-    
-    stripz.setPixelColor(i, g);
-    stripz.setPixelColor(i + y , lg);
-    stripz.setPixelColor(i + y + x, l);
-    stripz.setPixelColor(i + y - x, dg);
-  } 
-}
+   t = strip.numPixels();
+   pone = (int)random(0, t);
+   ptwo = (int)random(0, t);
+   ptre = (int)random(0, t);
+   pfor = (int)random(0, t);
+   pfiv = (int)random(0, t);
+   pnum = (int)random(6, 10);
+   doop = (int)random(0, 2);
+   
+   if (doop == 0)
+   {
+     for(i = pnum; i > 0; i--)
+     {
+       strip.setPixelColor(i + pone, lg);
+       strip.setPixelColor(i + pone + pone, g);
+       strip.setPixelColor(i + pone + pone + pone, lg);
+       strip.setPixelColor(i + ptwo, dg);
+       strip.setPixelColor(i + ptwo + ptwo, dg);
+       strip.setPixelColor(i + ptwo + ptwo + ptwo, dg);
+       strip.setPixelColor(i + ptre, g);
+       strip.setPixelColor(i + ptre + ptre, g);
+       strip.setPixelColor(i + ptre + ptre + ptre, dg);
+       strip.setPixelColor(i + pfor, l);
+       strip.setPixelColor(i + pfor + pfor, lg);
+       strip.setPixelColor(i + pfor + pfor + pfor, lg);
+       strip.setPixelColor(i + pfiv, dg);
+       strip.setPixelColor(i + pfiv + pfiv, g);
+       strip.setPixelColor(i + pfiv + pfiv + pfiv, g);
+       
+       stripz.setPixelColor(i + pone, lg);
+       stripz.setPixelColor(i + pone + pone, g);
+       stripz.setPixelColor(i + pone + pone + pone, lg);
+       stripz.setPixelColor(i + ptwo, dg);
+       stripz.setPixelColor(i + ptwo + ptwo, dg);
+       stripz.setPixelColor(i + ptwo + ptwo + ptwo, dg);
+       stripz.setPixelColor(i + ptre, g);
+       stripz.setPixelColor(i + ptre + ptre, lg);
+       stripz.setPixelColor(i + ptre + ptre + ptre, dg);
+       stripz.setPixelColor(i + pfor, l);
+       stripz.setPixelColor(i + pfor + pfor, lg);
+       stripz.setPixelColor(i + pfor + pfor + pfor, lg);
+       stripz.setPixelColor(i + pfiv, dg);
+       stripz.setPixelColor(i + pfiv + pfiv, g);
+       stripz.setPixelColor(i + pfiv + pfiv + pfiv, g);
+   
+     }
+
+   }
+  else if (doop == 1)
+   {
+     for(i = pnum + pnum; i > 0; i--)
+     {
+       strip.setPixelColor(i + pone, l);
+       strip.setPixelColor(i + pone + pone, l);
+       strip.setPixelColor(i + pone + pone + pone, l);
+       strip.setPixelColor(i + ptwo, g);
+       strip.setPixelColor(i + ptwo + ptwo, g);
+       strip.setPixelColor(i + ptwo + ptwo + ptwo, g);
+       strip.setPixelColor(i + ptre, g);
+       strip.setPixelColor(i + ptre + ptre, l);
+       strip.setPixelColor(i + ptre + ptre + ptre, g);
+       strip.setPixelColor(i + pfor, l);
+       strip.setPixelColor(i + pfor + pfor, dg);
+       strip.setPixelColor(i + pfor + pfor + pfor, lg);
+       strip.setPixelColor(i + pfiv, lg);
+       strip.setPixelColor(i + pfiv + pfiv, g);
+       strip.setPixelColor(i + pfiv + pfiv + pfiv, g);
+       
+       stripz.setPixelColor(i + pone, lg);
+       stripz.setPixelColor(i + pone + pone, g);
+       stripz.setPixelColor(i + pone + pone + pone, lg);
+       stripz.setPixelColor(i + ptwo, dg);
+       stripz.setPixelColor(i + ptwo + ptwo, dg);
+       stripz.setPixelColor(i + ptwo + ptwo + ptwo, dg);
+       stripz.setPixelColor(i + ptre, g);
+       stripz.setPixelColor(i + ptre + ptre, dg);
+       stripz.setPixelColor(i + ptre + ptre + ptre, g);
+       stripz.setPixelColor(i + pfor, l);
+       stripz.setPixelColor(i + pfor + pfor, lg);
+       stripz.setPixelColor(i + pfor + pfor + pfor, lg);
+       stripz.setPixelColor(i + pfiv, lg);
+       stripz.setPixelColor(i + pfiv + pfiv, g);
+       stripz.setPixelColor(i + pfiv + pfiv + pfiv, g);
+     }}
+     
+    else if (doop == 2)
+   {
+     for(i = pnum; i > 0; i--)
+     {
+       strip.setPixelColor(i + pone, lg);
+       strip.setPixelColor(i + pone + pone, g);
+       strip.setPixelColor(i + pone + pone + pone, lg);
+       strip.setPixelColor(i + ptwo, dg);
+       strip.setPixelColor(i + ptwo + ptwo, dg);
+       strip.setPixelColor(i + ptwo + ptwo + ptwo, dg);
+       strip.setPixelColor(i + ptre, g);
+       strip.setPixelColor(i + ptre + ptre, lg);
+       strip.setPixelColor(i + ptre + ptre + ptre, dg);
+       strip.setPixelColor(i + pfor, l);
+       strip.setPixelColor(i + pfor + pfor, lg);
+       strip.setPixelColor(i + pfor + pfor + pfor, lg);
+       strip.setPixelColor(i + pfiv, dg);
+       strip.setPixelColor(i + pfiv + pfiv, g);
+       strip.setPixelColor(i + pfiv + pfiv + pfiv, g);
+       
+       stripz.setPixelColor(i + pone, lg);
+       stripz.setPixelColor(i + pone + pone, g);
+       stripz.setPixelColor(i + pone + pone + pone, dg);
+       stripz.setPixelColor(i + ptwo, dg);
+       stripz.setPixelColor(i + ptwo + ptwo, g);
+       stripz.setPixelColor(i + ptwo + ptwo + ptwo, dg);
+       stripz.setPixelColor(i + ptre, g);
+       stripz.setPixelColor(i + ptre + ptre, dg);
+       stripz.setPixelColor(i + ptre + ptre + ptre, l);
+       stripz.setPixelColor(i + pfor, l);
+       stripz.setPixelColor(i + pfor + pfor, lg);
+       stripz.setPixelColor(i + pfor + pfor + pfor, lg);
+       stripz.setPixelColor(i + pfiv, g);
+       stripz.setPixelColor(i + pfiv + pfiv, g);
+       stripz.setPixelColor(i + pfiv + pfiv + pfiv, g);
+   
+      }  
+     }  
+    }
 
 uint8_t sweg = 1;
 void statusLight()
