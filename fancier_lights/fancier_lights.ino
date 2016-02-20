@@ -3,7 +3,8 @@
 
 #define PIN 5
 #define PINZ 2
-#define MULTIPLEX_PIN 420
+#define MULTIPLEX_PIN 420 //change 
+#define STATUS_PIN 1738 //change
 #define ROBOT_STATE_PIN 12
 #define ROBOT_STATE_PIN_TWO 22
 #define ROBOT_STATE_PIN_THREE 28
@@ -57,16 +58,24 @@ bool shooterAuto;
 void loop()
 {
   uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
+  uint8_t status_read = analogRead(STATUS_PIN) >> 63;
 
   bool state_pin1 = digitalRead(ROBOT_STATE_PIN);
   bool state_pin2 = digitalRead(ROBOT_STATE_PIN_TWO);
   bool state_pin3 = digitalRead(ROBOT_STATE_PIN_THREE);
 
-  gear = (multi_read & 1);
-  shooterReady = (multi_read >> 1) & 1;
+  shooterReady = (multi_read & 1);
+  ballLoaded = (multi_read >> 1) & 1;
   intakeActive = (multi_read >> 2) & 1;
-  ballLoaded = (multi_read >> 3) & 1;
+  gear = (multi_read >> 3) & 1;
   alliance = (multi_read >> 4) & 1;
+  
+  intakeMan = (status_read & 1);
+  intakeSafe = (status_read >> 1) & 1;
+  intakeAuto = (status_read >> 2) & 1;
+  shooterMan = (status_read >> 3) & 1;
+  shooterSafe = (status_read >> 4) & 1;
+  shooterAuto = (status_read >> 5) & 1;
 
   Serial.println();
   Serial.print(state_pin3);
@@ -84,9 +93,16 @@ void loop()
   }
   old_state = robot_state;
 
-  if (robot_state == STATE_TELEOP || robot_state == STATE_SHOOT)
+  if(robot_state == STATE_DISABLED)
   {
-    //statusLights();
+    lavalamp();
+  }
+  else if (robot_state == STATE_TELEOP)
+  {
+    statusLight();
+  }
+  else if(robot_state == STATE_SHOOT)
+  {
   }
   else if (robot_state == STATE_AUTONOMOUS)
   {
@@ -104,7 +120,7 @@ void loop()
   }
   else if (robot_state == STATE_CLIMB)
   {
-    // climbCRAZE();
+    climbCRAZE();
   }
   else
   {
@@ -284,13 +300,13 @@ void statusLight()
   {
     if (gear)
     {
-      strip.setPixelColor(i, green);
-      stripz.setPixelColor(i, green);
+      strip.setPixelColor(i, red);
+      stripz.setPixelColor(i, red);
     }
     else
     {
-      strip.setPixelColor(i, blue);
-      stripz.setPixelColor(i, blue);
+      strip.setPixelColor(i, white);
+      stripz.setPixelColor(i, white);
     }
   }
 
@@ -318,13 +334,13 @@ void statusLight()
   {
     if (shooterReady)
     {
-      strip.setPixelColor(i, blue);
-      stripz.setPixelColor(i, blue);
+      strip.setPixelColor(i, green);
+      stripz.setPixelColor(i, green);
     }
     else
     {
-      strip.setPixelColor(i, red);
-      stripz.setPixelColor(i, red);
+      strip.setPixelColor(i, strip.Color(0,0,0));
+      stripz.setPixelColor(i, strip.Color(0,0,0));
     }
   }
 }
@@ -430,7 +446,7 @@ void rainbow(uint8_t wait) {
     delay(wait);
   }
 }
-
+/*
 void pixelate()
 {
   uint8_t i, px, pxs, pxss, pxz, pxsz, pxssz, color;
@@ -493,7 +509,7 @@ void pixelate()
   strip.show();
   stripz.show();
 }
-
+*/
 void happylittlewave()
 {
   uint32_t colour, b, d, dg, g, wg;
