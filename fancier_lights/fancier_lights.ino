@@ -1,13 +1,13 @@
 #include <Adafruit_NeoPixel.h>
 #include "Wire.h"
 
-#define PIN 5
-#define PINZ 2
-#define MULTIPLEX_PIN 420 //change 
+#define PIN 32
+#define PINZ 34
+/*#define MULTIPLEX_PIN 420 //change 
 #define STATUS_PIN 1738 //change
 #define ROBOT_STATE_PIN 12
 #define ROBOT_STATE_PIN_TWO 22
-#define ROBOT_STATE_PIN_THREE 28
+#define ROBOT_STATE_PIN_THREE 28*/
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(31, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel stripz = Adafruit_NeoPixel(31, PINZ, NEO_GRB + NEO_KHZ800);
@@ -27,16 +27,16 @@ void setup()
 
   stripz.begin();
   stripz.show();
-  Serial.begin(9600);
+  //Serial.begin(9600);
 }
 
-#define STATE_TELEOP 0b000
+/*#define STATE_TELEOP 0b000
 #define STATE_AUTONOMOUS 0b001
 #define STATE_SHOOT 0b010
 #define STATE_BROWNOUT 0b100
 #define STATE_LOST_COMMS 0b101
 #define STATE_DISABLED 0b111
-#define STATE_CLIMB 0b011
+#define STATE_CLIMB 0b011*/
 
 bool first_loop = false;
 uint8_t robot_state, old_state;
@@ -57,7 +57,7 @@ bool shooterAuto;
 
 void loop()
 {
-  uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
+ /* uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
   uint8_t status_read = analogRead(STATUS_PIN) >> 63;
 
   bool state_pin1 = digitalRead(ROBOT_STATE_PIN);
@@ -122,11 +122,12 @@ void loop()
   {
     climbCRAZE();
   }
-  else
-  {
-    disabled();
-  }
-
+  else*/
+  //{
+  // disabled();
+   pixelate();
+  //}
+delay(50);
   strip.show();
   stripz.show();
 }
@@ -137,7 +138,7 @@ void climbCRAZE()
 {
   clearStrip();
    
-   int i, g, l, dg, lg, t, pone, ptwo, ptre, pfor, pfiv, pnum, doops, colour;
+   uint16_t i, g, l, dg, lg, t, pone, ptwo, ptre, pfor, pfiv, pnum, doops, colour;
    g = strip.Color(0,255,0);
    l = strip.Color(255,255,255);
    dg = strip.Color(0, 100, 0);
@@ -208,11 +209,11 @@ void climbCRAZE()
 uint8_t sweg = 1;
 void statusLight()
 {
-  int blue = strip.Color(0, 0, 255);
-  int green = strip.Color(0, 255, 00);
-  int red = strip.Color(255, 0, 0);
-  int yellow = strip.Color(255, 255, 0);
-  int white = strip.Color(255, 255, 255);
+  uint32_t blue = strip.Color(0, 0, 255);
+  uint32_t green = strip.Color(0, 255, 00);
+  uint32_t red = strip.Color(255, 0, 0);
+  uint32_t yellow = strip.Color(255, 255, 0);
+  uint32_t white = strip.Color(255, 255, 255);
 
   if (first_loop == true)
   {
@@ -371,10 +372,10 @@ uint8_t pos2 = -1;
 
 void sweep()
 {
-  int green = strip.Color(0, 255, 0);
-  int blue = strip.Color(0, 0, 255);
-  int red = strip.Color(255, 0, 0);
-  int white = strip.Color(255, 255, 255);
+  uint32_t green = strip.Color(0, 255, 0);
+  uint32_t blue = strip.Color(0, 0, 255);
+  uint32_t red = strip.Color(255, 0, 0);
+  uint32_t white = strip.Color(255, 255, 255);
 
   fillStripZ(0, 0);
   fillStrip(0, 0);
@@ -452,9 +453,9 @@ void rainbow(uint8_t wait) {
 
 void disabled()
 {
-  int green = strip.Color(0,255,0);
-  int black = strip.Color(0,0,0);
-  int white = strip.Color(255,255,255);
+  uint32_t green = strip.Color(0,255,0);
+  uint32_t black = strip.Color(0,0,0);
+  uint32_t white = strip.Color(255,255,255);
   
   clearStrip();
   
@@ -472,25 +473,31 @@ void disabled()
       rate2 --;
     else
       rate2 ++;
-    if(pos1 > strip.numPixels() / 2)  
+    if(pos1 > stripz.numPixels() / 2)  
       rate1 --;
     else
       rate1 ++;
     
     if(pos1 == 0)
-      delay(10);
+     // delay(10);
     
     pos1 += rate1;
     pos2 += rate2;
-    delay(10);
-    
-    for(int i = pos1 - 12; i < pos1 + 12; i ++)
+   // delay(10);
+/*
+   strip.setPixelColor(5,strip.Color(0,255,0));
+   strip.setPixelColor(0,0);
+
+   stripz.setPixelColor(5,stripz.Color(0,255,0));
+   stripz.setPixelColor(0,0);
+    */
+    for(int i = pos1 - 4; i < pos1 + 4; i ++)
     {
       strip.setPixelColor(i, green); 
       stripz.setPixelColor(i, green);
     }
    
-    for(int i = pos2 - 12; i < pos2 + 12; i ++)
+    for(int i = pos2 - 4; i < pos2 + 4; i ++)
     {
       if(!alliance)
       {
@@ -499,26 +506,27 @@ void disabled()
       }
     }
    
-    for(int i = pos2 + 12; i < pos1 - 12; i ++)
+    for(int i = pos2 + 4; i < pos1 - 4; i ++)
     {
       strip.setPixelColor(i, black);
       stripz.setPixelColor(i, black);
     }
+    
   }  
-  delay(90);
+ // delay(0);
 }
 
 void pixelate()
 {
-  int  px, pxs, pxss, pxz, pxsz, pxssz, colour;
-  int g, w, b, c;
+  uint32_t  px, pxs, pxss, pxz, pxsz, pxssz, colour;
+  uint32_t g, w, b, c;
   g = strip.Color(0, 150, 0); //darkgreen
   b = strip.Color(0, 255, 0); //green
   w = strip.Color(255, 255, 255); //white
   c = strip.Color(0, 0, 0); //black
 
-  int gz, wz, bz, cz;
-  gz = stripz.Color(0, 150, 0);
+  uint32_t gz, wz, bz, cz;
+  gz = stripz.Color(0, 255, 0);
   bz = stripz.Color(0, 255, 0);
   wz = stripz.Color(255, 255,255);
   cz = stripz.Color(0, 0, 0);
