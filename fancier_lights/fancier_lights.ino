@@ -124,22 +124,25 @@ void loop()
   }
   else
   {
-    rainbow(0);
+    disabled();
   }
 
   strip.show();
   stripz.show();
 }
 
+
+
 void climbCRAZE()
 {
   clearStrip();
    
-   int i, g, l, dg, lg, t, pone, ptwo, ptre, pfor, pfiv, pnum;
+   int i, g, l, dg, lg, t, pone, ptwo, ptre, pfor, pfiv, pnum, doops, colour;
    g = strip.Color(0,255,0);
    l = strip.Color(255,255,255);
    dg = strip.Color(0, 100, 0);
    lg = strip.Color(150, 255, 150);
+   
   
    t = strip.numPixels();
    pone = (int)random(0, t);
@@ -148,6 +151,8 @@ void climbCRAZE()
    pfor = (int)random(0, t);
    pfiv = (int)random(0, t);
    pnum = (int)random(6, 10);
+   colour = (int) random(0,3);
+   
   
      for(i = pnum; i > 0; i--)
      {
@@ -198,6 +203,7 @@ void climbCRAZE()
      }
      delay(80);
 }
+
 
 uint8_t sweg = 1;
 void statusLight()
@@ -443,27 +449,85 @@ void rainbow(uint8_t wait) {
     delay(wait);
   }
 }
-/*
+
+void disabled()
+{
+  int green = strip.Color(0,255,0);
+  int black = strip.Color(0,0,0);
+  int white = strip.Color(255,255,255);
+  
+  clearStrip();
+  
+  if(first_loop)
+  {
+    rate1 = 0;
+    rate2 = 0;
+    pos1 = 0;
+    pos2 = strip.numPixels();
+    first_loop = false; 
+  }
+  else
+  {
+    if(pos2 > strip.numPixels() / 2)
+      rate2 --;
+    else
+      rate2 ++;
+    if(pos1 > strip.numPixels() / 2)  
+      rate1 --;
+    else
+      rate1 ++;
+    
+    if(pos1 == 0)
+      delay(10);
+    
+    pos1 += rate1;
+    pos2 += rate2;
+    delay(10);
+    
+    for(int i = pos1 - 12; i < pos1 + 12; i ++)
+    {
+      strip.setPixelColor(i, green); 
+      stripz.setPixelColor(i, green);
+    }
+   
+    for(int i = pos2 - 12; i < pos2 + 12; i ++)
+    {
+      if(!alliance)
+      {
+        strip.setPixelColor(i, white);
+        stripz.setPixelColor(i, white); 
+      }
+    }
+   
+    for(int i = pos2 + 12; i < pos1 - 12; i ++)
+    {
+      strip.setPixelColor(i, black);
+      stripz.setPixelColor(i, black);
+    }
+  }  
+  delay(90);
+}
+
 void pixelate()
 {
-  uint8_t i, px, pxs, pxss, pxz, pxsz, pxssz, color;
-  uint32_t g, w, b, c;
-  g = strip.Color(255, 255, 49); //greenish-yellow
-  b = strip.Color(255, 255, 0); //yellow
+  int  px, pxs, pxss, pxz, pxsz, pxssz, colour;
+  int g, w, b, c;
+  g = strip.Color(0, 150, 0); //darkgreen
+  b = strip.Color(0, 255, 0); //green
   w = strip.Color(255, 255, 255); //white
   c = strip.Color(0, 0, 0); //black
 
-  uint32_t gz, wz, bz, cz;
-  gz = stripz.Color(255, 255, 49);
-  bz = stripz.Color(255, 255, 0);
-  wz = stripz.Color(255, 255, 255);
+  int gz, wz, bz, cz;
+  gz = stripz.Color(0, 150, 0);
+  bz = stripz.Color(0, 255, 0);
+  wz = stripz.Color(255, 255,255);
   cz = stripz.Color(0, 0, 0);
 
-  px = random(0, strip.numPixels());
-  pxs = random(0, strip.numPixels());
-  pxss = random(0, strip.numPixels());
-  color = random(0, 4) ;
-  if (color == 0)
+  px = (int)random(0, strip.numPixels());
+  pxs = (int)random(0, strip.numPixels());
+  pxss = (int)random(0, strip.numPixels());
+  colour = (int)random(0,4) ;
+  if (colour == 0)
   {
     strip.setPixelColor(px, g);
     strip.setPixelColor(pxs, g);
@@ -473,7 +537,7 @@ void pixelate()
     stripz.setPixelColor(pxs, gz);
     stripz.setPixelColor(pxss, gz);
   }
-  else if (color == 1)
+  else if (colour ==1)
   {
     strip.setPixelColor(px, b);
     strip.setPixelColor(pxs, b);
@@ -483,7 +547,7 @@ void pixelate()
     stripz.setPixelColor(pxs, bz);
     stripz.setPixelColor(pxss, bz);
   }
-  else if (color == 2)
+  else if (colour == 2)
   {
     strip.setPixelColor(px, c);
     strip.setPixelColor(pxs, c);
@@ -503,38 +567,23 @@ void pixelate()
     stripz.setPixelColor(pxs, wz);
     stripz.setPixelColor(pxss, wz);
   }
-  strip.show();
-  stripz.show();
+strip.show();
+stripz.show();
 }
-*/
-void happylittlewave()
-{
-  uint32_t colour, b, d, dg, g, wg;
-  b = strip.Color(0, 0, 0); //black
-  d = strip.Color(0, 50, 0); //darker green
-  dg = strip.Color(0, 100, 0); //dark green
-  g = strip.Color(0, 255, 0); //green
-  wg = strip.Color(75, 255, 75); //light green
-  colour = random(0, 4);
 
-
-  stripz.show();
-  strip.show();
-  delay(15);
-}
 
 void clearStrip()
 {
   for (int i = 0; i < strip.numPixels(); i ++)
   {
     strip.setPixelColor(i, 0);
-    strip.show();
-    delay(1);
+    //strip.show();
+    //delay(1);
   }
   for (int i = 0; i < stripz.numPixels(); i ++)
   {
-    stripz.setPixelColor(i, 0);
-    stripz.show();
+    //stripz.setPixelColor(i, 0);
+    //stripz.show();
     delay(1);
   }
 }
