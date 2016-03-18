@@ -1,13 +1,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "Wire.h"
 
-#define PIN 32
-#define PINZ 34
-/*#define MULTIPLEX_PIN 420 //change 
-#define STATUS_PIN 1738 //change
-#define ROBOT_STATE_PIN 12
-#define ROBOT_STATE_PIN_TWO 22
-#define ROBOT_STATE_PIN_THREE 28*/
+#define PIN 420
+#define PINZ 1738
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(31, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel stripz = Adafruit_NeoPixel(31, PINZ, NEO_GRB + NEO_KHZ800);
@@ -30,104 +25,90 @@ void setup()
   //Serial.begin(9600);
 }
 
-/*#define STATE_TELEOP 0b000
-#define STATE_AUTONOMOUS 0b001
-#define STATE_SHOOT 0b010
-#define STATE_BROWNOUT 0b100
-#define STATE_LOST_COMMS 0b101
-#define STATE_DISABLED 0b111
-#define STATE_CLIMB 0b011*/
-
 bool first_loop = false;
-uint8_t robot_state, old_state;
 
 bool gear;
 bool shooterReady;
-bool intakeActive;
 bool ballLoaded;
+bool shooterWarm;
 bool alliance;
 
-bool intakeMan;
-bool intakeSafe;
-bool intakeAuto;
+bool brownout;
+bool lostComms;
+bool teleop;
+bool auton;
+bool climbing;
 
-bool shooterMan;
-bool shooterSafe;
-bool shooterAuto;
+/*
+We need to have a way to see these things (in order of preference):
+1. Do we have a ball?
+2. Is the shooter warming up?
+3. Is the shooter ready to shoot?
+4. Which gear we are in
+5. Low battery
+6. Lost Comms
+*/
+String robot_state;
+String old_state = "disabled";
 
 void loop()
-{
- /* uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
-  uint8_t status_read = analogRead(STATUS_PIN) >> 63;
-
-  bool state_pin1 = digitalRead(ROBOT_STATE_PIN);
-  bool state_pin2 = digitalRead(ROBOT_STATE_PIN_TWO);
-  bool state_pin3 = digitalRead(ROBOT_STATE_PIN_THREE);
-
-  shooterReady = (multi_read & 1);
-  ballLoaded = (multi_read >> 1) & 1;
-  intakeActive = (multi_read >> 2) & 1;
-  gear = (multi_read >> 3) & 1;
-  alliance = (multi_read >> 4) & 1;
+{  
+  //uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
+  //uint8_t status_read = analogRead(STATUS_PIN) >> 63;
   
-  intakeMan = (status_read & 1);
-  intakeSafe = (status_read >> 1) & 1;
-  intakeAuto = (status_read >> 2) & 1;
-  shooterMan = (status_read >> 3) & 1;
-  shooterSafe = (status_read >> 4) & 1;
-  shooterAuto = (status_read >> 5) & 1;
-
-  Serial.println();
-  Serial.print(state_pin3);
-  Serial.print(state_pin2);
-  Serial.print(state_pin1);
-
-  robot_state = ((state_pin3 << 2) & 0b100) | ((state_pin2 << 1) & 0b10) | ((state_pin1) & 0b1);
-
-  Serial.println();
-  Serial.println(robot_state);
-
-  if (robot_state != old_state)
+  if(teleop)
+    robot_state = "teleop";
+  else if(auton)
+    robot_state = "auton";
+  else if(lostComms)
+    robot_state = "lost comms";
+  else if(brownout)
+    robot_state = "brownout";
+  else if(climbing)
+    robot_state = "climbing";
+  else
+    robot_state = "disabled";  
+  
+  if(old_state != robot_state)
   {
-    first_loop = false;
+    clearStrip();
+    first_loop = true;
   }
-  old_state = robot_state;
-
-  if(robot_state == STATE_DISABLED)
-  {
-    lavalamp();
-  }
-  else if (robot_state == STATE_TELEOP)
+  
+  if(teleop)
   {
     statusLight();
   }
-  else if(robot_state == STATE_SHOOT)
+  else if(auton)
   {
-  }
-  else if (robot_state == STATE_AUTONOMOUS)
-  {
+    //robot is performing scripted autonomous
     sweep();
   }
-  else if (robot_state == STATE_BROWNOUT)
+  else if(lostComms)
   {
-    fillStrip(strip.Color(139, 69, 19), 255);
-    fillStripZ(stripz.Color(139, 69, 19), 255);
+    //loss of Communications
+    fillStrip(strip.Color(255,0,0),255);
+    fillStripZ(strip.Color(255,0,0),255);
   }
-  else if (robot_state == STATE_LOST_COMMS)
+  else if(brownout)
   {
-    fillStrip(strip.Color(255, 0, 0), 255);
-    fillStripZ(stripz.Color(255, 0, 0), 255);
+    //power short
+    fillStrip(strip.Color(131,79,0),255);
+    fillStripZ(strip.Color(131,79,0),255);
   }
-  else if (robot_state == STATE_CLIMB)
+  else if(climbing)
   {
+    //robot is climbing
     climbCRAZE();
   }
-  else*/
-  //{
-  // disabled();
-   pixelate();
-  //}
-delay(50);
+  else
+  {
+    //disabled
+    lavalamp();
+  }
+ 
+  old_state = robot_state;
+  
   strip.show();
   stripz.show();
 }
@@ -205,148 +186,59 @@ void climbCRAZE()
      delay(80);
 }
 
-
-uint8_t sweg = 1;
 void statusLight()
 {
-  uint32_t blue = strip.Color(0, 0, 255);
-  uint32_t green = strip.Color(0, 255, 00);
-  uint32_t red = strip.Color(255, 0, 0);
-  uint32_t yellow = strip.Color(255, 255, 0);
-  uint32_t white = strip.Color(255, 255, 255);
-
-  if (first_loop == true)
+  int black = strip.Color(0,0,0);
+  int purple = strip.Color(255,0,255);
+  int white = strip.Color(255,255,255);
+  int red = strip.Color(255,0,0);
+  int green = strip.Color(0,255,0);
+  int yellow = strip.Color(255,255,0);
+  
+  for(uint8_t i = 0; i < strip.numPixels() / 3; i ++)
   {
-    if (!alliance)
+    if(ballLoaded)
     {
-      fillStrip(255, red);
-      fillStripZ(255, red);
-      delay(300);
-    }
+      strip.setPixelColor(i, purple);
+      stripz.setPixelColor(i, purple);
+    } 
     else
     {
-      fillStrip(255, blue);
-      fillStrip(255, blue);
-      delay(300);
-    }
-    first_loop = false;
-  }
-
-  if (sweg == 0)
-    sweg = 1;
-  else
-    sweg = 0;
-
-  //ball loaded
-  if (ballLoaded)
-  {
-    for (uint8_t i = 0; i < strip.numPixels() / 3; i ++)
-    {
-      if ((i + sweg) % 2 == 0)
-      {
-        strip.setPixelColor(i, green);
-        stripz.setPixelColor(i, green);
-      }
-      else
-      {
-        strip.setPixelColor(i, white);
-        stripz.setPixelColor(i, white);
-      }
+      strip.setPixelColor(i, black);
+      stripz.setPixelColor(i, black);
     }
   }
-  else
+  for(uint8_t i = strip.numPixels() / 3; i < strip.numPixels() * (2 / 3); i ++)
   {
-    //intake indicator 1 Roller Active
-    for (uint8_t i = 0; i < strip.numPixels() / 6; i ++)
-    {
-      if (intakeActive)
-      {
-        if ((i + sweg) % 2 == 0)
-        {
-          strip.setPixelColor(i, blue);
-          stripz.setPixelColor(i, blue);
-        }
-        else
-        {
-          strip.setPixelColor(i, white);
-          stripz.setPixelColor(i, white);
-        }
-      }
-      else
-      {
-        strip.setPixelColor(i, strip.Color(0, 0, 0));
-        stripz.setPixelColor(i, strip.Color(0, 0, 0));
-      }
-    }
-    //intake indicator 2 Roller Mode
-    for (uint8_t i = strip.numPixels() / 6; i < strip.numPixels() / 3; i ++)
-    {
-      if (intakeMan)
-      {
-        strip.setPixelColor(i, red);
-        stripz.setPixelColor(i, red);
-      }
-      if (intakeSafe)
-      {
-        strip.setPixelColor(i, yellow);
-        stripz.setPixelColor(i, yellow);
-      }
-      if (intakeAuto)
-      {
-        strip.setPixelColor(i, green);
-        stripz.setPixelColor(i, green);
-      }
-    }
-  }
-
-  //drive indicator gear
-  for (uint8_t i = strip.numPixels() / 3; i < 2 * (strip.numPixels() / 3); i ++)
-  {
-    if (gear)
+    if(gear)
     {
       strip.setPixelColor(i, red);
       stripz.setPixelColor(i, red);
     }
     else
     {
-      strip.setPixelColor(i, white);
+      strip.setPixelColor(i, white); 
       stripz.setPixelColor(i, white);
     }
   }
-
-  //shooter indicator 1 shooter mode
-  for (uint8_t i = strip.numPixels() / 3; i < 5 * (strip.numPixels() / 6); i ++)
+  for(uint8_t i = strip.numPixels() * (2/3); i < strip.numPixels(); i ++)
   {
-    if (shooterMan)
+    if(!shooterReady && !shooterWarm)
     {
-      strip.setPixelColor(i, red);
-      stripz.setPixelColor(i, red);
+      strip.setPixelColor(i, black);
+      stripz.setPixelColor(i, black);
     }
-    if (shooterSafe)
+    else if(shooterWarm)
     {
       strip.setPixelColor(i, yellow);
-      stripz.setPixelColor(i, yellow);
+      stripz.setPixelColor(i, yellow); 
     }
-    if (shooterAuto)
+    else if(shooterReady)
     {
       strip.setPixelColor(i, green);
       stripz.setPixelColor(i, green);
     }
-  }
-  //shooter indicator 2 shooter ready
-  for (uint8_t i = (5 * (strip.numPixels() / 6)); i < strip.numPixels(); i ++)
-  {
-    if (shooterReady)
-    {
-      strip.setPixelColor(i, green);
-      stripz.setPixelColor(i, green);
-    }
-    else
-    {
-      strip.setPixelColor(i, strip.Color(0,0,0));
-      stripz.setPixelColor(i, strip.Color(0,0,0));
-    }
-  }
+  }  
 }
 
 void lavalamp()
@@ -451,71 +343,6 @@ void rainbow(uint8_t wait) {
   }
 }
 
-void disabled()
-{
-  uint32_t green = strip.Color(0,255,0);
-  uint32_t black = strip.Color(0,0,0);
-  uint32_t white = strip.Color(255,255,255);
-  
-  clearStrip();
-  
-  if(first_loop)
-  {
-    rate1 = 0;
-    rate2 = 0;
-    pos1 = 0;
-    pos2 = strip.numPixels();
-    first_loop = false; 
-  }
-  else
-  {
-    if(pos2 > strip.numPixels() / 2)
-      rate2 --;
-    else
-      rate2 ++;
-    if(pos1 > stripz.numPixels() / 2)  
-      rate1 --;
-    else
-      rate1 ++;
-    
-    if(pos1 == 0)
-     // delay(10);
-    
-    pos1 += rate1;
-    pos2 += rate2;
-   // delay(10);
-/*
-   strip.setPixelColor(5,strip.Color(0,255,0));
-   strip.setPixelColor(0,0);
-
-   stripz.setPixelColor(5,stripz.Color(0,255,0));
-   stripz.setPixelColor(0,0);
-    */
-    for(int i = pos1 - 4; i < pos1 + 4; i ++)
-    {
-      strip.setPixelColor(i, green); 
-      stripz.setPixelColor(i, green);
-    }
-   
-    for(int i = pos2 - 4; i < pos2 + 4; i ++)
-    {
-      if(!alliance)
-      {
-        strip.setPixelColor(i, white);
-        stripz.setPixelColor(i, white); 
-      }
-    }
-   
-    for(int i = pos2 + 4; i < pos1 - 4; i ++)
-    {
-      strip.setPixelColor(i, black);
-      stripz.setPixelColor(i, black);
-    }
-    
-  }  
- // delay(0);
-}
-
 void pixelate()
 {
   uint32_t  px, pxs, pxss, pxz, pxsz, pxssz, colour;
@@ -596,15 +423,5 @@ void clearStrip()
   }
 }
 
-void score()
-{
-  for (byte i = 0; i < 64; i++) {
-    byte whiteness = i * 4;
-    fillStrip(strip.Color(whiteness, 255, whiteness), 255);
-    fillStripZ(stripz.Color(whiteness, 255, whiteness), 255);
-    strip.show();
-    stripz.show();
-  }
-}
 
 
