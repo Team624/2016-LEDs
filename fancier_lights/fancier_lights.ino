@@ -1,14 +1,17 @@
 #include <Adafruit_NeoPixel.h>
 #include "Wire.h"
 
-#define PIN 420
-#define PINZ 1738
+#define PIN 420 //I don't know this Pin, please change
+#define PINZ 1738 //I don't know this Pin, please change
+
+#define STATE_PIN 100 //I don't know this Pin, please change
+#define MULTIPLEX_PIN 200 //I don't know this Pin, please Change
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(31, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel stripz = Adafruit_NeoPixel(31, PINZ, NEO_GRB + NEO_KHZ800);
 
 bool on = true;
-bool stay_white = false;
+//bool stay_white = false;
 
 #include "utilities.h"
 
@@ -53,8 +56,19 @@ String old_state = "disabled";
 
 void loop()
 {  
-  //uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
-  //uint8_t status_read = analogRead(STATUS_PIN) >> 63;
+  uint8_t state_read = analogRead(STATE_PIN) >> 15;
+  uint8_t multi_read = analogRead(MULTIPLEX_PIN) >> 31;
+  
+  auton = (state_read & 1);
+  teleop = (state_read >> 1) & 1;
+  brownout = (state_read >> 2) & 1;
+  lostComms = (state_read >> 3) & 1;
+  
+  ballLoaded = (state_read & 1);
+  shooterReady = (state_read >> 1) & 1;
+  shooterWarm = (state_read >> 2) & 1;
+  gear = (state_read >> 3) & 1;
+  alliance = (state_read >> 4) & 1;
   
   if(teleop)
     robot_state = "teleop";
@@ -63,9 +77,9 @@ void loop()
   else if(lostComms)
     robot_state = "lost comms";
   else if(brownout)
-    robot_state = "brownout";
+    robot_state = "brownout";/*
   else if(climbing)
-    robot_state = "climbing";
+    robot_state = "climbing";*/
   else
     robot_state = "disabled";  
   
@@ -95,12 +109,12 @@ void loop()
     //power short
     fillStrip(strip.Color(131,79,0),255);
     fillStripZ(strip.Color(131,79,0),255);
-  }
+  }/*
   else if(climbing)
   {
     //robot is climbing
     climbCRAZE();
-  }
+  }*/
   else
   {
     //disabled
