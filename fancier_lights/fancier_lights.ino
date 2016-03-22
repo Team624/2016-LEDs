@@ -141,13 +141,13 @@ void climbCRAZE()
    
   
    t = strip.numPixels();
-   pone = (int)random(0, t);
-   ptwo = (int)random(0, t);
-   ptre = (int)random(0, t);
-   pfor = (int)random(0, t);
-   pfiv = (int)random(0, t);
-   pnum = (int)random(6, 10);
-   colour = (int) random(0,3);
+   pone = (uint16_t)random(0, t);
+   ptwo = (uint16_t)random(0, t);
+   ptre = (uint16_t)random(0, t);
+   pfor = (uint16_t)random(0, t);
+   pfiv = (uint16_t)random(0, t);
+   pnum = (uint16_t)random(6, 10);
+   colour = (uint16_t) random(0,3);
    
   
      for(i = pnum; i > 0; i--)
@@ -202,12 +202,12 @@ void climbCRAZE()
 
 void statusLight()
 {
-  int black = strip.Color(0,0,0);
-  int purple = strip.Color(255,0,255);
-  int white = strip.Color(255,255,255);
-  int red = strip.Color(255,0,0);
-  int green = strip.Color(0,255,0);
-  int yellow = strip.Color(255,255,0);
+  uint32_t black = strip.Color(0,0,0);
+  uint32_t purple = strip.Color(255,0,255);
+  uint32_t white = strip.Color(255,255,255);
+  uint32_t red = strip.Color(255,0,0);
+  uint32_t green = strip.Color(0,255,0);
+  uint32_t yellow = strip.Color(255,255,0);
   
   for(uint8_t i = 0; i < strip.numPixels() / 3; i ++)
   {
@@ -372,10 +372,10 @@ void pixelate()
   wz = stripz.Color(255, 255,255);
   cz = stripz.Color(0, 0, 0);
 
-  px = (int)random(0, strip.numPixels());
-  pxs = (int)random(0, strip.numPixels());
-  pxss = (int)random(0, strip.numPixels());
-  colour = (int)random(0,4) ;
+  px = (uint32_t)random(0, strip.numPixels());
+  pxs = (uint32_t)random(0, strip.numPixels());
+  pxss = (uint32_t)random(0, strip.numPixels());
+  colour = (uint32_t)random(0,4) ;
   if (colour == 0)
   {
     strip.setPixelColor(px, g);
@@ -423,13 +423,13 @@ stripz.show();
 
 void clearStrip()
 {
-  for (int i = 0; i < strip.numPixels(); i ++)
+  for (uint8_t i = 0; i < strip.numPixels(); i ++)
   {
     strip.setPixelColor(i, 0);
     //strip.show();
     //delay(1);
   }
-  for (int i = 0; i < stripz.numPixels(); i ++)
+  for (uint8_t i = 0; i < stripz.numPixels(); i ++)
   {
     //stripz.setPixelColor(i, 0);
     //stripz.show();
